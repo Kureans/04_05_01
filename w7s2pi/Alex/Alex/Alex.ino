@@ -1243,6 +1243,8 @@ void setup() {
    pinMode(blue, OUTPUT);
    digitalWrite(s0,HIGH); //Putting S0/S1 on HIGH/HIGH levels means the output frequency scalling is at 100% (recommended)
    digitalWrite(s1,HIGH); //LOW/LOW is off HIGH/LOW is 20% and LOW/HIGH is  2%
+   digitalWrite(s2,HIGH);
+   digitalWrite(s3,HIGH);  
   
   //dbprintf("PI is %3.2f\n", PI);
 
