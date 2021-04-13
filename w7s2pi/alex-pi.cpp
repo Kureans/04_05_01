@@ -8,7 +8,7 @@
 #include "serialize.h"
 #include "constants.h"
 
-#define PORT_NAME			"/dev/ttyACM2"
+#define PORT_NAME			"/dev/ttyACM0"
 #define BAUD_RATE			B9600
 
 int exitFlag=0;
@@ -166,8 +166,7 @@ void flushInput()
 
 void getParams(TPacket *commandPacket)
 {
-	printf("Enter distance/angle in cm/degrees (e.g. 50) and power in %% (e.g. 75) separated by space.\n");
-	printf("E.g. 50 75 means go at 50 cm at 75%% power for forward/backward, or 50 degrees left or right turn at 75%%  power\n");
+	printf("Enter distance/angle in cm/degrees (e.g. 50)");
 //	scanf("%d %d", &commandPacket->params[0], &commandPacket->params[1]);
 	scanf("%d", &commandPacket->params[0]);
 	flushInput();
@@ -275,7 +274,7 @@ int main()
 	while(!exitFlag)
 	{
 		char ch;
-		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, s=stop, z=get colour, c=clear stats, g=get stats q=exit)\n");
+		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, s=stop, z=get colour, c=clear stats, m=music,  q=exit)\n");
 		scanf("%c", &ch);
 
 		// Purge extraneous characters from input stream

@@ -1,5 +1,114 @@
-//Last updated: 1 April
-//Distance: calibrated to 5cm,10cm, 80%
+#define NOTE_B0  31
+#define NOTE_C1  33
+#define NOTE_CS1 35
+#define NOTE_D1  37
+#define NOTE_DS1 39
+#define NOTE_E1  41
+#define NOTE_F1  44
+#define NOTE_FS1 46
+#define NOTE_G1  49
+#define NOTE_GS1 52
+#define NOTE_A1  55
+#define NOTE_AS1 58
+#define NOTE_B1  62
+#define NOTE_C2  65
+#define NOTE_CS2 69
+#define NOTE_D2  73
+#define NOTE_DS2 78
+#define NOTE_E2  82
+#define NOTE_F2  87
+#define NOTE_FS2 93
+#define NOTE_G2  98
+#define NOTE_GS2 104
+#define NOTE_A2  110
+#define NOTE_AS2 117
+#define NOTE_B2  123
+#define NOTE_C3  131
+#define NOTE_CS3 139
+#define NOTE_D3  147
+#define NOTE_DS3 156
+#define NOTE_E3  165
+#define NOTE_F3  175
+#define NOTE_FS3 185
+#define NOTE_G3  196
+#define NOTE_GS3 208
+#define NOTE_A3  220
+#define NOTE_AS3 233
+#define NOTE_B3  247
+#define NOTE_C4  262
+#define NOTE_CS4 277
+#define NOTE_D4  294
+#define NOTE_DS4 311
+#define NOTE_E4  330
+#define NOTE_F4  349
+#define NOTE_FS4 370
+#define NOTE_G4  392
+#define NOTE_GS4 415
+#define NOTE_A4  440
+#define NOTE_AS4 466
+#define NOTE_B4  494
+#define NOTE_C5  523
+#define NOTE_CS5 554
+#define NOTE_D5  587
+#define NOTE_DS5 622
+#define NOTE_E5  659
+#define NOTE_F5  698
+#define NOTE_FS5 740
+#define NOTE_G5  784
+#define NOTE_GS5 831
+#define NOTE_A5  880
+#define NOTE_AS5 932
+#define NOTE_B5  988
+#define NOTE_C6  1047
+#define NOTE_CS6 1109
+#define NOTE_D6  1175
+#define NOTE_DS6 1245
+#define NOTE_E6  1319
+#define NOTE_F6  1397
+#define NOTE_FS6 1480
+#define NOTE_G6  1568
+#define NOTE_GS6 1661
+#define NOTE_A6  1760
+#define NOTE_AS6 1865
+#define NOTE_B6  1976
+#define NOTE_C7  2093
+#define NOTE_CS7 2217
+#define NOTE_D7  2349
+#define NOTE_DS7 2489
+#define NOTE_E7  2637
+#define NOTE_F7  2794
+#define NOTE_FS7 2960
+#define NOTE_G7  3136
+#define NOTE_GS7 3322
+#define NOTE_A7  3520
+#define NOTE_AS7 3729
+#define NOTE_B7  3951
+#define NOTE_C8  4186
+#define NOTE_CS8 4435
+#define NOTE_D8  4699
+#define NOTE_DS8 4978
+
+/*
+ Darude - Sandstorm
+
+ (c) Jordi Agricola 2014
+
+ Speaker on port speaker
+
+ */
+
+ #define speaker A2
+ #define red A3
+ #define green A4
+ #define blue A5
+ 
+// note durations: 4 = quarter note, eight = eighth note, etc.:
+  
+ int shortTone = 90; //change back to eighty
+ int longTone = 200;
+ int standardDelay = 50;
+ int delayBetweenBars = 50;
+ 
 
 #include <serialize.h>
 #include <stdarg.h>
@@ -503,17 +612,15 @@ int pwmVal(float speed)
   return (int) ((speed / 100.0) * 255.0);
 }
 
-// Move Alex forward "dist" cm at speed "speed".
-// "speed" is expressed as a percentage. E.g. 50 is
-// move forward at half speed.
+// Move Alex reverse "dist" cm. 
+// We decided not to use the "speed" parameter; 
+// values fed to motors are fixed from calibration
 // Specifying a distance of 0 means Alex will
-// continue moving forward indefinitely.
-void reverse(float dist, float speed) //supposed to be forward
+// continue reversing indefinitely.
+void reverse(float dist, float speed) 
 {
 
   dir = BACKWARD;
-  
-  int val = pwmVal(speed);
 
   if (dist > 0)
     deltaDist = dist;
@@ -522,23 +629,16 @@ void reverse(float dist, float speed) //supposed to be forward
 
   newDist = reverseDist + deltaDist;
 
-  // For now we will ignore dist and move
-  // forward indefinitely. We will fix this
-  // in Week 9.
-
-  // LF = Left forward pin, LR = Left reverse pin
-  // RF = Right forward pin, RR = Right reverse pin
-  // This will be replaced later with bare-metal code.
   
-  analogWrite(LF, val);
-  analogWrite(RF, val + 10);
+  analogWrite(LF, 245);
+  analogWrite(RF, 236);
   analogWrite(LR,0);
   analogWrite(RR, 0);
 }
 
-// Reverse Alex "dist" cm at speed "speed".
-// "speed" is expressed as a percentage. E.g. 50 is
-// reverse at half speed.
+// Move Alex forward "dist" cm at speed "speed".
+// We decided not to use the "speed" parameter; 
+// values fed to motors are fixed from calibration
 // Specifying a distance of 0 means Alex will
 // continue reversing indefinitely.
 void forward(float dist, float speed) 
@@ -558,12 +658,9 @@ void forward(float dist, float speed)
   // For now we will ignore dist and 
   // reverse indefinitely. We will fix this
   // in Week 9.
-
-  // LF = Left forward pin, LR = Left reverse pin
-  // RF = Right forward pin, RR = Right reverse pin
-  // This will be replaced later with bare-metal code.
-  analogWrite(LR, val + 31);
-  analogWrite(RR, val);
+  
+  analogWrite(LR, 250);
+  analogWrite(RR, 240);
   analogWrite(LF, 0);
   analogWrite(RF, 0);
 }
@@ -580,6 +677,7 @@ unsigned long computeDeltaTicks(float ang)
 
    return ticks;
 }
+
 // Turn Alex left "ang" degrees at speed "speed".
 // "speed" is expressed as a percentage. E.g. 50 is
 // turn left at half speed.
@@ -599,10 +697,6 @@ void left(float ang, float speed) //supposed to be left
 
   targetTicks = leftReverseTicksTurns + deltaTicks;
 
-  // For now we will ignore ang. We will fix this in Week 9.
-  // We will also replace this code with bare-metal later.
-  // To turn left we reverse the left wheel and move
-  // the right wheel forward.
   analogWrite(LR, val);
   analogWrite(RF, val);
   analogWrite(LF, 0);
@@ -627,11 +721,7 @@ void right(float ang, float speed) //supposed to be right
     deltaTicks = computeDeltaTicks(ang) * 0.3;
 
   targetTicks = rightReverseTicksTurns + deltaTicks;
-  
-  // For now we will ignore ang. We will fix this in Week 9.
-  // We will also replace this code with bare-metal later.
-  // To turn right we reverse the right wheel and move
-  // the left wheel forward.
+ 
   analogWrite(RR, val);
   analogWrite(LF, val);
   analogWrite(LR, 0);
@@ -724,12 +814,12 @@ void handleCommand(TPacket *command)
     case COMMAND_FORWARD:
         sendOK(); // send from Arduino to RPI 
        // forward((float) command->params[0], (float) command->params[1]); // get distance and speed
-        forward((float) command->params[0], (float) 85); // get distance and speed
+        forward((float) command->params[0], (float) 100); // get distance
         break;
    case COMMAND_REVERSE:
         sendOK();
         //reverse((float) command->params[0], (float) command->params[1]);
-        reverse((float) command->params[0], (float) 85);
+        reverse((float) command->params[0], (float) 100);
         break;
    case COMMAND_TURN_LEFT:
         sendOK();
@@ -821,22 +911,25 @@ void GetColours()
   
     if (Green == 0)
     {
-        //dbprintf("Error");
-        Serial.print("Error ");
-        Serial.println(Green);
+      dbprintf("Error");
+      dbprintf(Green);
+      
     }
-    else if (Green >= 1100)
+    else if (Green >= 600)
     {
-      //dbprintf("Red");
-      Serial.print("Red");
-      Serial.println(Green);
+      dbprintf("Red");
+      dbprintf("%d", (int)Green);
     }
-    else
+    else if (Green <= 450)
     {
-      //dbprintf("Green");  
-      Serial.print("Green");
-      Serial.println(Green);       
+      dbprintf("Green");   
+       dbprintf("%d", (int)Green);  
     }   
+    else 
+    {
+      dbprintf("Retake");
+       dbprintf("%d", (int)Green);
+    }
 }
 
 //Get Distance
@@ -863,16 +956,258 @@ void GetDistance()
   obs_distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
 
   delay(500);  
-  //dbprintf("%d", (int)obs_distance);
+  dbprintf("%d", (int)obs_distance);
 
-  Serial.println((int)obs_distance);
+ // Serial.println((int)obs_distance);
             
 }
 
 //Get Music
 void GetMusic() {
+  disco(); 
+  stopmusic();
+  delay(100);
+}
 
+//Flash LED
+void flash() {
+  analogWrite(red, random(0, 255));
+  analogWrite(green, random(0, 255));
+  analogWrite(blue, random(0, 255));
+  delay(10);
+}
 
+void stopmusic() {
+  noTone(speaker);
+  analogWrite(red, 0);
+  analogWrite(green, 0);
+  analogWrite(blue, 0);
+}
+
+void disco() {
+   tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(delayBetweenBars);
+ 
+    tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash(); 
+ tone(speaker,NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ 
+     tone(speaker,  NOTE_E4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash(); 
+ tone(speaker,NOTE_E4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_E4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_E4, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_E4, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_E4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_E4, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ 
+ 
+     tone(speaker,  NOTE_D4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash(); 
+ tone(speaker,NOTE_D4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_D4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_D4, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_D4, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_D4, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_D4, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+
+tone(speaker, NOTE_A3, longTone);
+delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(delayBetweenBars);
+ 
+    tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash(); 
+ tone(speaker,NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ 
+ tone(speaker, NOTE_E4, longTone);
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(delayBetweenBars);
+ 
+    tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash(); 
+ tone(speaker,NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+   delay(shortTone);
+  noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, shortTone);
+  delay(shortTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+ tone(speaker,  NOTE_B3, shortTone);
+ delay(shortTone);
+ noTone(speaker);
+  delay(standardDelay); flash();
+tone(speaker,  NOTE_B3, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
+
+tone(speaker, NOTE_E4, longTone); 
+ delay(longTone);
+ noTone(speaker);
+ delay(standardDelay); flash();
   
 }
 
@@ -903,12 +1238,17 @@ void setup() {
    pinMode(s2,OUTPUT);
    pinMode(s3,OUTPUT);
    pinMode(out,INPUT);
+   pinMode(red, OUTPUT);
+   pinMode(green, OUTPUT);
+   pinMode(blue, OUTPUT);
    digitalWrite(s0,HIGH); //Putting S0/S1 on HIGH/HIGH levels means the output frequency scalling is at 100% (recommended)
    digitalWrite(s1,HIGH); //LOW/LOW is off HIGH/LOW is 20% and LOW/HIGH is  2%
   
   //dbprintf("PI is %3.2f\n", PI);
 
-  //forward(10, 80);
+ //forward(20, 85);
+//reverse(20,80);
+//right(20,100);
   //GetDistance();
 }
 
@@ -939,11 +1279,6 @@ void handlePacket(TPacket *packet)
 
 void loop() {
 
-  GetDistance();
-  GetColours();
-  delay(1000);
-  
-/*
   TPacket recvPacket; // This holds commands from the Pi
 
   TResult result = readPacket(&recvPacket);
@@ -960,14 +1295,12 @@ void loop() {
       {
         sendBadChecksum();
       }  
-*/
 
-/*
       
   if (dir == STOP)
   {
     putArduinoToIdle();
-  } */
+  } 
       
 // Check if commanded distance has been reached
 // Note: Distance calibrated from middle of the wheel (corresponds approximately to middle of LIDAR)

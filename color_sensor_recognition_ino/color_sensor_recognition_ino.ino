@@ -47,10 +47,12 @@ void loop(){
 
     if (Green == 0)
       Serial.println("Error");
-    else if (Green >= 800)
+    else if (Green >= 600)
       Serial.println("Red");
+    else if (Green <= 450)
+      Serial.println("Green");   
     else
-      Serial.println("Green");                                               
+      Serial.println("Retake");                                            
 
   delay(3000);                                   //2s delay you can modify if you want
   
