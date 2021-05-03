@@ -5,4 +5,6 @@ The main functionalities of Alex include: mobility (forward, backward, turn left
 
 Under the w7s2pi folder, alex-pi.cpp is the main C++ code executed on the RPi, while Alex.ino (further under the Alex/Alex folder) is the main code executed on the Arduino. 
 
+Done by: Teng Yi Shiong, Tan Le Yi, Jared Cheang and Wong Zi Xin, Avellin
+
 
